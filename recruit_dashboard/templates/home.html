@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Student</title>
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-primary:hover {
+            background-color: #004494;
+            border-color: #004494;
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="container mt-3 text-right">
+        <span class="mr-3 font-weight-bold">Welcome, {{ user.username }}</span>
+        <a href="{% url 'list_students' %}" class="btn btn-secondary btn-sm mr-2">View List</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-4" style="color: #333;">Add New Student</h2>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="POST" action="">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="name" class="font-weight-bold">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required placeholder="Enter student's full name" value="{{ name|default_if_none:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="font-weight-bold">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" required placeholder="student@example.com" value="{{ email|default_if_none:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="course_interest" class="font-weight-bold">Course Interest</label>
+                    <input type="text" class="form-control" id="course_interest" name="course_interest" required placeholder="E.g., Web Development, Data Science" value="{{ course_interest|default_if_none:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="status" class="font-weight-bold">Status</label>
+                    <select class="form-control" id="status" name="status" required>
+                        <option value="" disabled {% if not status %}selected{% endif %}>-- Select Status --</option>
+                        <option value="New" {% if status == 'New' %}selected{% endif %}>New</option>
+                        <option value="Contacted" {% if status == 'Contacted' %}selected{% endif %}>Contacted</option>
+                        <option value="Enrolled" {% if status == 'Enrolled' %}selected{% endif %}>Enrolled</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block mt-4 py-2 font-weight-bold">Save Student</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (Optional for dropdowns, etc.) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

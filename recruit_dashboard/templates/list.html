@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List</title>
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .table-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="container mt-3 text-right">
+        <span class="mr-3 font-weight-bold">Welcome, {{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="table-container">
+            <h2 class="text-center mb-4" style="color: #333;">All Students</h2>
+            
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <form method="GET" action="{% url 'list_students' %}" class="form-inline">
+                        <input type="text" name="course" class="form-control mr-2" style="width: 300px;" placeholder="Search by Course Interest" value="{{ query|default_if_none:'' }}">
+                        <button type="submit" class="btn btn-outline-primary">Search</button>
+                        {% if query %}
+                            <a href="{% url 'list_students' %}" class="btn btn-outline-secondary ml-2">Clear</a>
+                        {% endif %}
+                    </form>
+                </div>
+                <div class="col-md-4 text-right">
+                    <a href="{% url 'add_student' %}" class="btn btn-success">Add New Student</a>
+                </div>
+            </div>
+
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Course Interest</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.course_interest }}</td>
+                        <td>
+                            {% if student.status == 'New' %}
+                                <span class="badge badge-primary">{{ student.status }}</span>
+                            {% elif student.status == 'Contacted' %}
+                                <span class="badge badge-warning">{{ student.status }}</span>
+                            {% elif student.status == 'Enrolled' %}
+                                <span class="badge badge-success">{{ student.status }}</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ student.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No students found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
